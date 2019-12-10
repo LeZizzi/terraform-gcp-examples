@@ -6,9 +6,9 @@ resource "google_compute_instance" "ovirt-engine-instance" {
   ## provisioned
   # count        = 2
   # name         = "${var.instance-name}-${count.index}"
-  machine_type = "${var.vm_type["1point7gig"]}"
+  machine_type = var.vm_type["512gig"]
 
-  zone = "${var.region}"
+  zone = var.region
 
   tags = [
     "${var.network}-firewall-ssh",
@@ -21,7 +21,7 @@ resource "google_compute_instance" "ovirt-engine-instance" {
   ]
 
   disk {
-    image = "${var.os["centos7"]}"
+    image = {var.os["centos7"]}
   }
 
   metadata {
@@ -29,12 +29,13 @@ resource "google_compute_instance" "ovirt-engine-instance" {
   }
 
   network_interface {
-    subnetwork = "${google_compute_subnetwork.ovirt_network_subnetwork.name}"
+    subnetwork = google_compute_subnetwork.ovirt_network_subnetwork.name
 
     access_config {
       // Ephemeral IP
     }
   }
+  boot_disk {}
 }
 
 resource "google_compute_instance" "metrics-store-instance" {
@@ -60,7 +61,7 @@ resource "google_compute_instance" "metrics-store-instance" {
   ]
 
   disk {
-    image = "${var.os["centos7"]}"
+    image = var.os["centos7"]
     size  = 20
   }
 
@@ -69,10 +70,11 @@ resource "google_compute_instance" "metrics-store-instance" {
   }
 
   network_interface {
-    subnetwork = "${google_compute_subnetwork.ovirt_network_subnetwork.name}"
+    subnetwork = google_compute_subnetwork.ovirt_network_subnetwork.name
 
     access_config {
       // Ephemeral IP
     }
   }
+  boot_disk {}
 }
